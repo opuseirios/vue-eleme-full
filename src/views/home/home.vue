@@ -41,7 +41,7 @@
 
 <script>
   import MainHeader from "../../components/mainHeader/mainHeader";
-  import Split from "../../assets/base/split/split";
+  import Split from "../../base/split/split";
   import axios from 'axios'
 
   export default {
@@ -105,6 +105,7 @@
   @import "./../../assets/scss/mixin";
 
   .home {
+    background: #fff;
     .city-nav {
       margin-top: 60px;
       padding: 40px 0 0 0;
