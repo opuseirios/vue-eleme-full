@@ -22,11 +22,11 @@
         <h5 class="title" slot="message">搜索历史</h5>
       </split>
       <ul>
-        <li class="item" v-for="item in locationHistory">
+        <li class="item" v-for="item in locationHistory" @click="goToSite(item)">
           <h4 class="name">{{item.name}}</h4>
           <p class="text">{{item.address}}</p>
         </li>
-        <li class="item clearLocation" @click="clearAllLocation" v-show="locationHistory.length">
+        <li class="item clearLocation" @click="clearLocationHistory" v-show="locationHistory.length">
           清空所有
         </li>
       </ul>
@@ -45,7 +45,7 @@
 <script>
   import axios from 'axios'
   import Split from "../../base/split/split";
-  import {mapGetters,mapActions} from 'vuex'
+  import {mapGetters, mapActions, mapMutations} from 'vuex'
 
   export default {
     components: {Split},
@@ -63,7 +63,7 @@
       this.cityId = this.$route.params.id;
       this._getCityById(this.cityId);
     },
-    computed:{
+    computed: {
       ...mapGetters([
         'locationHistory'
       ])
@@ -90,9 +90,18 @@
           }
         })
       },
-      addLocationHistory(item){
-        console.log(item);
-        this.addLocation(item);
+      addLocationHistory(item) {
+        this.saveLocationHistory(item);
+        this.goToSite(item);
+      },
+      goToSite(item) {
+        this.setCurrentLocation(item);
+        this.$router.push({
+          path: '/msite',
+          query: {
+            geohash: item.geohash
+          }
+        })
       },
       _getCityById(id) {
         axios.get(`https://elm.cangdu.org/v1/cities/${id}`).then(response => {
@@ -100,10 +109,13 @@
           this.cityName = res.name;
         })
       },
-      ...mapActions({
-        addLocation:"saveLocationHistory",
-        clearAllLocation:"clearLocationHistory"
-      })
+      ...mapMutations({
+        setCurrentLocation:"SET_CURRENT_LOCATION"
+      }),
+      ...mapActions([
+        'saveLocationHistory',
+        'clearLocationHistory'
+      ])
     }
   }
 </script>
@@ -205,7 +217,7 @@
       border-bottom: 1px solid #ddd;
       flex-direction: column;
       justify-content: center;
-      &.clearLocation{
+      &.clearLocation {
         text-align: center;
         font-size: 36px;
         height: 100px;
