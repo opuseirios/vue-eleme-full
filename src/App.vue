@@ -1,15 +1,17 @@
 <template>
   <div id="app">
-    <home></home>
     <router-view/>
   </div>
 </template>
 
 <script>
 import Home from "./views/home/home";
+import MainHeader from "./components/mainHeader/mainHeader";
 
 export default {
-  components: {Home},
+  components: {
+    MainHeader,
+    Home},
   name: 'App'
 }
 </script>
