@@ -41,6 +41,7 @@
   position: fixed;
   bottom: 0;
   left: 0;
+  border-top: 2px solid #ccc;
   .tab-item{
     flex: 1;
     display: flex;
