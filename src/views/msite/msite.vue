@@ -121,7 +121,13 @@
       },
       /*店铺详情*/
       goToShop(item){
-
+        this.$router.push({
+          path:'/shop',
+          query:{
+            geohash:this.geohash,
+            id:item.id
+          }
+        })
       },
       /*获取当前地址*/
       _getAddress() {
