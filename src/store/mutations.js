@@ -6,6 +6,9 @@ const mutations = {
   },
   [types.SET_CURRENT_LOCATION](state,location){
     state.currentLocation = location;
+  },
+  [types.SET_SEARCH_HISTORY](state,searches){
+    state.searchHistory = searches;
   }
 }
 

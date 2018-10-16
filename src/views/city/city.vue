@@ -7,7 +7,7 @@
       <div class="title">{{cityName}}</div>
       <router-link tag="div" class="changeCity" to="/home">切换城市</router-link>
     </header>
-    <form class="city-form">
+    <div class="city-form">
       <div>
         <input type="search" name="city" placeholder="输入学校、商物楼、地址" class="city-input input-style" v-model="keyword"
                required>
@@ -16,7 +16,7 @@
       <div>
         <input type="submit" name="submit" class="city-submit input-style" @click="searchLocation" value="提交">
       </div>
-    </form>
+    </div>
     <section class="city-search" v-show="locationSearchResult.length===0">
       <split :split-height="splitHeight">
         <h5 class="title" slot="message">搜索历史</h5>
@@ -65,7 +65,8 @@
     },
     computed: {
       ...mapGetters([
-        'locationHistory'
+        'locationHistory',
+        'currentLocation'
       ])
     },
     methods: {
@@ -95,6 +96,7 @@
         this.goToSite(item);
       },
       goToSite(item) {
+        localStorage.setItem('__geoHash__',item.geohash);
         this.setCurrentLocation(item);
         this.$router.push({
           path: '/msite',

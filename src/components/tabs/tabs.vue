@@ -1,10 +1,10 @@
 <template>
   <div class='tabs'>
-    <router-link tag="div" class="tab-item" :to="{path:'msite',query:{geohash:currentLocation.geohash}}">
+    <router-link tag="div" class="tab-item" :to="{path:'/msite',query:{geohash:geohash}}">
       <i class="icon-home"></i>
       <span class="text">外卖</span>
     </router-link>
-    <router-link tag="div" class="tab-item" to="/search">
+    <router-link tag="div" class="tab-item" :to="'/search/'+geohash">
       <i class="icon-search"></i>
       <span class="text">搜索</span>
     </router-link>
@@ -20,13 +20,18 @@
 </template>
 
 <script>
-  import {mapGetters} from 'vuex';
   export default {
     name: 'tabs',
     computed:{
-      ...mapGetters([
-       'currentLocation'
-      ])
+
+    },
+    data(){
+      return{
+        geohash:''
+      }
+    },
+    mounted(){
+      this.geohash = localStorage.getItem('__geoHash__');
     }
   }
 </script>

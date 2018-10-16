@@ -26,7 +26,7 @@
     <section class="msite-restaurants">
       <h4 class="title"><i class="icon-gift"></i><span>附近商家</span></h4>
       <ul>
-        <li class="item" v-for="item in restaurants">
+        <li class="item" v-for="item in restaurants" @click="goToShop(item)">
           <div class="icon">
             <img :src="'http://elm.cangdu.org/img/'+item.image_path" alt="">
           </div>
@@ -105,7 +105,7 @@
       }
     },
     mounted() {
-      this.geohash = this.currentLocation.geohash;
+      this.geohash = localStorage.getItem('__geoHash__');
       this._getAddress();
       this._getIndexEntry();
       this._getRestaurants();
@@ -117,7 +117,11 @@
     },
     methods: {
       reload() {
-        this.geohash = this.$route.query.geohash;
+        this.geohash =  localStorage.getItem('__geoHash__');
+      },
+      /*店铺详情*/
+      goToShop(item){
+
       },
       /*获取当前地址*/
       _getAddress() {
@@ -137,7 +141,6 @@
           .then((res) => {
             if (res.status === 200) {
               this.entries = this._splitEntries(res.data);
-              console.log(this.entries);
             }
           })
       },
