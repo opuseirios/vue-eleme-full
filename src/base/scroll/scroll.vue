@@ -21,12 +21,16 @@
       click: {
         type: Boolean,
         default: true
+      },
+      listenScroll: {
+        type: Boolean,
+        default: true
       }
     },
     created() {
-      setTimeout(()=>{
+      setTimeout(() => {
         this._initScroll();
-      },20)
+      }, 20)
     },
     methods: {
       _initScroll() {
@@ -36,7 +40,12 @@
         this.scroll = new BScroll(this.$refs.scroll, {
           click: this.click,
           probeType: this.probeType
-        })
+        });
+        if (this.listenScroll) {
+          this.scroll.on('scroll', (pos) => {
+            this.$emit('scroll', pos);
+          })
+        }
       },
       enable() {
         this.scroll && this.scroll.enable()
@@ -46,6 +55,12 @@
       },
       refresh() {
         this.scroll && this.scroll.refresh()
+      },
+      scrollTo() {
+        this.scroll && this.scroll.scrollTo.apply(this.scroll, arguments)
+      },
+      scrollToElement() {
+        this.scroll && this.scroll.scrollToElement.apply(this.scroll, arguments);
       }
     },
     watch: {

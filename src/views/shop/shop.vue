@@ -28,6 +28,9 @@
           <div class="goods-container">
             <goods :shop-id="shopId"></goods>
           </div>
+          <div class="shopcart-wrapper" v-if="shopDetail">
+            <shopcart :delivery_fee="shopDetail.float_delivery_fee" :delivery_min_price="shopDetail.float_minimum_order_amount"></shopcart>
+          </div>
         </div>
       </div>
     </div>
@@ -38,15 +41,16 @@
   import Slide from "../../base/slide/slide";
   import Switches from "../../base/switches/switches";
   import Goods from "../../components/goods/goods";
+  import Shopcart from "../../components/shopcart/shopcart";
   import axios from 'axios'
   export default {
     name: 'shop',
-    components: {Slide,Switches,Goods},
+    components: {Slide,Switches,Goods,Shopcart},
     data(){
       return{
         geohash:'',
         shopId:'',
-        shopDetail:null
+        shopDetail:null,
       }
     },
     created() {
@@ -151,10 +155,16 @@
          position: fixed;
          left: 0;
          top: 328px;
-         bottom: 200px;
+         bottom: 96px;
          overflow: hidden;
          width: 100%;
        }
+      .shopcart-wrapper{
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+      }
     }
   }
 }
