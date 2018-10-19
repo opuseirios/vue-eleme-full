@@ -5,10 +5,14 @@ import App from './App'
 import router from './router'
 import 'lib-flexible'
 import store from './store'
+import 'element-ui/lib/theme-chalk/index.css';
 import './assets/scss/index.scss'
+import ElementUI from 'element-ui'
 
 Vue.config.productionTip = false
 
+
+Vue.use(ElementUI);
 
 
 /* eslint-disable no-new */

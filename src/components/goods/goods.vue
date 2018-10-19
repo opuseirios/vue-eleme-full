@@ -1,54 +1,68 @@
 <template>
   <div class='goods'>
-    <scroll class="good-menu" :data="goodMenu">
-      <ul>
-        <li class="menu-item" v-for="(item,index) in goodMenu" :class="{'active':index===currentIndex}"
-            @click="selectItem(item,index)">
-          {{item}}
-        </li>
-      </ul>
-    </scroll>
-    <scroll class="good-content"
-            :probe-type="probeType"
-            :listen-scroll="listenScroll"
-            :data="foodList"
-            ref="goodContent"
-            @scroll="scroll"
-    >
-      <ul>
-        <li class="item" v-for="item in foodList" ref="foodGroup">
-          <h4 class="title">{{item.name}} <span class="subTitle">{{item.description}}</span></h4>
-          <ul>
-            <li class="food-item" v-for="food in item.foods">
-              <div class="icon">
-                <img :src="'http://elm.cangdu.org/img/'+food.image_path" alt="">
-              </div>
-              <div class="content">
-                <h4 class="name">{{food.name}} <i class="feature" v-if="food.attributes.length">招牌</i></h4>
-                <p class="desc">{{food.description}}</p>
-                <p class="sell">月售{{food.rating_count}}份&nbsp;&nbsp;好评率{{food.satisfy_rate}}%</p>
-                <span class="activity" v-if="food.activity">{{food.activity.image_text}}</span>
-                <div class="price">¥<span class="num">{{food.specfoods[0].price}}</span></div>
-              </div>
-            </li>
-          </ul>
-        </li>
-      </ul>
-    </scroll>
+    <div class="goods-container">
+      <scroll class="good-menu" :data="goodMenu">
+        <ul>
+          <li class="menu-item" v-for="(item,index) in goodMenu" :class="{'active':index===currentIndex}"
+              @click="selectItem(item,index)">
+            {{item}}
+          </li>
+        </ul>
+      </scroll>
+      <scroll class="good-content"
+              :probe-type="probeType"
+              :listen-scroll="listenScroll"
+              :data="foodList"
+              ref="goodContent"
+              @scroll="scroll"
+      >
+        <ul>
+          <li class="item" v-for="item in foodList" ref="foodGroup">
+            <h4 class="title">{{item.name}} <span class="subTitle">{{item.description}}</span></h4>
+            <ul>
+              <li class="food-item" v-for="food in item.foods">
+                <div class="icon">
+                  <img :src="'http://elm.cangdu.org/img/'+food.image_path" alt="">
+                </div>
+                <div class="content">
+                  <h4 class="name">{{food.name}} <i class="feature" v-if="food.attributes.length">招牌</i></h4>
+                  <p class="desc">{{food.description}}</p>
+                  <p class="sell">月售{{food.rating_count}}份&nbsp;&nbsp;好评率{{food.satisfy_rate}}%</p>
+                  <span class="activity" v-if="food.activity">{{food.activity.image_text}}</span>
+                  <div class="price"><div>¥<span class="num">{{food.specfoods[0].price}}</span></div>
+                    <div class="cart-control-wrapper">
+                      <cart-control  :food="food" @add="add($event,food)"></cart-control>
+                    </div>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </scroll>
+    </div>
+    <div class="shopcart-wrapper" v-if="shopDetail">
+      <shop-cart ref="shopcart" :delivery_fee="shopDetail.float_delivery_fee" :delivery_min_price="shopDetail.float_minimum_order_amount" :select-foods="selectFoods"></shop-cart>
+    </div>
   </div>
 </template>
 
 <script>
   import axios from 'axios';
   import Scroll from './../../base/scroll/scroll'
+  import CartControl from './../../base/cart-control/cart-control'
+  import ShopCart from './../../components/shopcart/shopcart'
 
   export default {
     name: '',
-    components: {Scroll},
+    components: {Scroll,CartControl,ShopCart},
     props: {
       shopId: {
-        type: String,
-        default: "-1"
+        type: Number,
+        default: -1
+      },
+      shopDetail:{
+        type: Object
       }
     },
     data() {
@@ -56,7 +70,7 @@
         foodList: [],
         currentIndex: 0,
         scrollY: -1,
-        heightArray: []
+        heightArray: [],
       }
     },
     created() {
@@ -76,6 +90,23 @@
           menu.push(item.name)
         })
         return menu;
+      },
+      selectFoods(){
+        let foods = [];
+        if (!this.foodList.length) {
+          return
+        }
+        for(let i=0;i<this.foodList.length;i++){
+          let foodGroup = this.foodList[i].foods;
+          for(let j=0;j<foodGroup.length;j++){
+            let food = foodGroup[j];
+            if(food.count>=1){
+              foods.push(food);
+            }
+          }
+
+        }
+        return foods;
       }
     },
     methods: {
@@ -84,6 +115,14 @@
       },
       scroll(pos) {
         this.scrollY = pos.y;
+      },
+      add(event,food){
+        this._drop(event);
+      },
+      _drop(event){
+        this.$nextTick(()=>{
+          this.$refs.shopcart.drop(event);
+        })
       },
       _getFoodList() {
         axios.get(`https://elm.cangdu.org/shopping/v2/menu?restaurant_id=${this.shopId}`)
@@ -110,6 +149,9 @@
       },
       scrollY(newY) {
         let heights = this.heightArray.slice();
+        if(newY>0){
+          return 0
+        }
         for (let i = 0; i < heights.length; i++) {
           let height1 = heights[i];
           let height2 = heights[i + 1];
@@ -118,7 +160,7 @@
             return
           }
         }
-        this.currentIndex = heights.length-2;
+        this.currentIndex = heights.length - 2;
       }
     }
   }
@@ -129,8 +171,15 @@
 
   .goods {
     height: 100%;
-    overflow: hidden;
-    display: flex;
+    .goods-container{
+      display: flex;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 96px;
+      overflow: hidden;
+    }
     .good-menu {
       flex: 0 0 160px;
       width: 160px;
@@ -237,14 +286,25 @@
               font-size: 20px;
               color: rgb(240, 20, 20);
               line-height: 48px;
+              display: flex;
+              justify-content: space-between;
               .num {
                 font-size: 28px;
                 font-weight: 700;
+              }
+              .cart-control-wrapper{
+
               }
             }
           }
         }
       }
+    }
+    .shopcart-wrapper{
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
     }
   }
 </style>

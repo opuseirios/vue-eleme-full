@@ -26,10 +26,7 @@
         </div>
         <div class="shop-content">
           <div class="goods-container">
-            <goods :shop-id="shopId"></goods>
-          </div>
-          <div class="shopcart-wrapper" v-if="shopDetail">
-            <shopcart :delivery_fee="shopDetail.float_delivery_fee" :delivery_min_price="shopDetail.float_minimum_order_amount"></shopcart>
+            <goods :shop-detail="shopDetail" :shop-id="shopId"></goods>
           </div>
         </div>
       </div>
@@ -49,13 +46,13 @@
     data(){
       return{
         geohash:'',
-        shopId:'',
+        shopId:-1,
         shopDetail:null,
       }
     },
     created() {
       this.geohash = this.$route.query.geohash;
-      this.shopId = this.$route.query.id;
+      this.shopId = parseInt(this.$route.query.id);
       this._getShopDetail();
     },
     methods:{
@@ -155,16 +152,10 @@
          position: fixed;
          left: 0;
          top: 328px;
-         bottom: 96px;
+         bottom: 0;
          overflow: hidden;
          width: 100%;
        }
-      .shopcart-wrapper{
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-      }
     }
   }
 }
