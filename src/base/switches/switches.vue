@@ -38,7 +38,6 @@
     },
     methods:{
       changeIndex(index){
-
         this.currentIndex = index;
         this.$emit('change',index);
       }
@@ -54,6 +53,7 @@
   align-items: center;
   height: 100px;
   background: #fff;
+  border-bottom: 1px solid $color-border;
   .switch-item{
     flex: 1;
     text-align: center;

@@ -22,11 +22,14 @@
       </div>
       <div class="shop-container">
         <div class="switch-wrapper">
-          <switches></switches>
+          <switches @change="changeSwitch"></switches>
         </div>
         <div class="shop-content">
-          <div class="goods-wrapper">
+          <div class="goods-wrapper" v-if="switchIndex===0">
             <goods :shop-detail="shopDetail" :shop-id="shopId"></goods>
+          </div>
+          <div class="ratings-wrapper" v-if="switchIndex===1">
+            <ratings :shop-id="shopId"></ratings>
           </div>
         </div>
       </div>
@@ -38,16 +41,18 @@
   import Slide from "../../base/slide/slide";
   import Switches from "../../base/switches/switches";
   import Goods from "../../components/goods/goods";
+  import Ratings from "../../components/ratings/ratings";
   import Shopcart from "../../components/shopcart/shopcart";
   import axios from 'axios'
   export default {
     name: 'shop',
-    components: {Slide,Switches,Goods,Shopcart},
+    components: {Slide,Switches,Goods,Shopcart,Ratings},
     data(){
       return{
         geohash:'',
         shopId:-1,
         shopDetail:null,
+        switchIndex:0
       }
     },
     created() {
@@ -58,6 +63,9 @@
     methods:{
       back(){
         this.$router.back();
+      },
+      changeSwitch(index){
+        this.switchIndex = index;
       },
       _getShopDetail(){
         axios.get(`https://elm.cangdu.org/shopping/restaurant/${this.shopId}`)
@@ -148,7 +156,7 @@
   }
   .shop-container{
     .shop-content{
-       .goods-wrapper{
+       .goods-wrapper,.ratings-wrapper{
          position: fixed;
          left: 0;
          top: 328px;
