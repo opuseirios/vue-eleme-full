@@ -25,7 +25,7 @@
           <switches></switches>
         </div>
         <div class="shop-content">
-          <div class="goods-container">
+          <div class="goods-wrapper">
             <goods :shop-detail="shopDetail" :shop-id="shopId"></goods>
           </div>
         </div>
@@ -148,7 +148,7 @@
   }
   .shop-container{
     .shop-content{
-       .goods-container{
+       .goods-wrapper{
          position: fixed;
          left: 0;
          top: 328px;

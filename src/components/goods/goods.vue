@@ -29,9 +29,16 @@
                   <p class="desc">{{food.description}}</p>
                   <p class="sell">月售{{food.rating_count}}份&nbsp;&nbsp;好评率{{food.satisfy_rate}}%</p>
                   <span class="activity" v-if="food.activity">{{food.activity.image_text}}</span>
-                  <div class="price"><div>¥<span class="num">{{food.specfoods[0].price}}</span></div>
+                  <div class="price" v-if="!food.specifications.length">
+                    <div>¥<span class="num">{{food.specfoods[0].price}}</span></div>
                     <div class="cart-control-wrapper">
-                      <cart-control  :food="food" @add="add($event,food)"></cart-control>
+                      <cart-control :food="food" @add="add($event,food)"></cart-control>
+                    </div>
+                  </div>
+                  <div class="price" v-if="food.specifications.length">
+                    <div>¥<span class="num">{{food.specfoods[0].price}}</span> <span style="color: #333;">起</span></div>
+                    <div class="cart-control-wrapper">
+                      <spec-cart-control :food="food" @select="selectSpec" @decrease="decreaseSpec"></spec-cart-control>
                     </div>
                   </div>
                 </div>
@@ -42,8 +49,17 @@
       </scroll>
     </div>
     <div class="shopcart-wrapper" v-if="shopDetail">
-      <shop-cart ref="shopcart" :delivery_fee="shopDetail.float_delivery_fee" :delivery_min_price="shopDetail.float_minimum_order_amount" :select-foods="selectFoods"></shop-cart>
+      <shop-cart ref="shopcart" :delivery_fee="shopDetail.float_delivery_fee"
+                 :delivery_min_price="shopDetail.float_minimum_order_amount" :select-foods="selectFoods"></shop-cart>
     </div>
+    <spec v-if="selectFood"
+          :name="selectFood.name"
+          :specs="selectFood.specifications[0]"
+          :price="selectFood.specfoods[0].price"
+          @addSpec="addSpec"
+          ref="spec">
+    </spec>
+    <tip text="多规格商品只能去购物车删除哦" ref="tip"></tip>
   </div>
 </template>
 
@@ -51,17 +67,20 @@
   import axios from 'axios';
   import Scroll from './../../base/scroll/scroll'
   import CartControl from './../../base/cart-control/cart-control'
+  import SpecCartControl from './../../base/spec-cart-control/spec-cart-control'
   import ShopCart from './../../components/shopcart/shopcart'
-
+  import Spec from './../../base/spec/spec'
+  import Tip from './../../base/tip/tip'
+  import Vue from 'vue'
   export default {
     name: '',
-    components: {Scroll,CartControl,ShopCart},
+    components: {Scroll, CartControl, ShopCart, SpecCartControl, Spec, Tip},
     props: {
       shopId: {
         type: Number,
         default: -1
       },
-      shopDetail:{
+      shopDetail: {
         type: Object
       }
     },
@@ -71,6 +90,7 @@
         currentIndex: 0,
         scrollY: -1,
         heightArray: [],
+        selectFood: null
       }
     },
     created() {
@@ -91,16 +111,16 @@
         })
         return menu;
       },
-      selectFoods(){
+      selectFoods() {
         let foods = [];
         if (!this.foodList.length) {
           return
         }
-        for(let i=0;i<this.foodList.length;i++){
+        for (let i = 0; i < this.foodList.length; i++) {
           let foodGroup = this.foodList[i].foods;
-          for(let j=0;j<foodGroup.length;j++){
+          for (let j = 0; j < foodGroup.length; j++) {
             let food = foodGroup[j];
-            if(food.count>=1){
+            if (food.count >= 1) {
               foods.push(food);
             }
           }
@@ -116,11 +136,28 @@
       scroll(pos) {
         this.scrollY = pos.y;
       },
-      add(event,food){
+      add(event, food) {
         this._drop(event);
       },
-      _drop(event){
-        this.$nextTick(()=>{
+      selectSpec(food) {
+        this.selectFood = food;
+        setTimeout(() => {
+          this.$refs.spec.show();
+        }, 20)
+      },
+      addSpec(specItem) {
+        if(!this.selectFood.count){
+          Vue.set(this.selectFood,'count',1)
+          Vue.set(this.selectFood,'spec',specItem);
+        }else {
+          this.selectFood.count++;
+        }
+      },
+      decreaseSpec(){
+        this.$refs.tip.show();
+      },
+      _drop(event) {
+        this.$nextTick(() => {
           this.$refs.shopcart.drop(event);
         })
       },
@@ -149,7 +186,7 @@
       },
       scrollY(newY) {
         let heights = this.heightArray.slice();
-        if(newY>0){
+        if (newY > 0) {
           return 0
         }
         for (let i = 0; i < heights.length; i++) {
@@ -171,7 +208,7 @@
 
   .goods {
     height: 100%;
-    .goods-container{
+    .goods-container {
       display: flex;
       position: absolute;
       top: 0;
@@ -292,7 +329,7 @@
                 font-size: 28px;
                 font-weight: 700;
               }
-              .cart-control-wrapper{
+              .cart-control-wrapper {
 
               }
             }
@@ -300,7 +337,7 @@
         }
       }
     }
-    .shopcart-wrapper{
+    .shopcart-wrapper {
       position: fixed;
       bottom: 0;
       left: 0;

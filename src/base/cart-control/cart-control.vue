@@ -35,6 +35,7 @@
       },
       decreaseCount(){
         this.food.count--;
+        this.$emit('decrease');
       }
     }
   }

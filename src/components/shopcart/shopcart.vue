@@ -25,19 +25,19 @@
         </div>
     </div>
     <transition name="fold">
-      <div class="shopcart-list" v-show="showFlag">
+      <div class="shopcart-list" v-show="showFlag&&selectFoods.length>0">
         <div class="list-header">
           <h2 class="title">购物车</h2>
-          <span class="empty"><i class="el-icon-delete"></i>&nbsp;清空</span>
+          <span class="empty" @click="clearAllFood"><i class="el-icon-delete"></i>&nbsp;清空</span>
         </div>
         <scroll class="list-content" :data="selectFoods" ref="listContent">
           <ul>
             <transition-group name="slide">
-              <li class="food" v-for="food in selectFoods" :key="food.name">
-                <span class="name">{{food.name}}</span>
+              <li class="food" v-for="(food,index) in selectFoods" :key="index+food.name">
+                <div class="name"><span>{{food.name}}</span><span class="spec" v-show="food.spec">{{food.spec}}</span></div>
                 <span class="price"><i>¥</i>{{food.specfoods[0].price}}</span>
                 <div class="cart-control-wrapper">
-                  <cart-control :food="food" @add="addFood"></cart-control>
+                  <cart-control :food="food" @add="addFood" @decrease="decreaseFood"></cart-control>
                 </div>
               </li>
             </transition-group>
@@ -46,18 +46,20 @@
       </div>
     </transition>
     <transition name="fade">
-      <div class="list-mask" v-show="showFlag" @click="hide"></div>
+      <div class="list-mask"  v-show="showFlag&&selectFoods.length>0" @click="hide"></div>
     </transition>
+    <modal ref="modal" @confirm="confirm" text="清除购物车"></modal>
   </div>
 </template>
 
 <script>
   import CartControl from './../../base/cart-control/cart-control'
   import Scroll from './../../base/scroll/scroll'
+  import Modal from './../../base/modal/modal'
 
   export default {
     name: '',
-    components:{CartControl,Scroll},
+    components:{CartControl,Scroll,Modal},
     props: {
       selectFoods: {
         type: Array
@@ -139,6 +141,19 @@
       },
       addFood(event){
         this.drop(event);
+      },
+      decreaseFood(){
+        if(this.selectFoods.length === 0){
+          this.showFlag = false;
+        }
+      },
+      clearAllFood(){
+        this.$refs.modal.show();
+      },
+      confirm(){
+        this.selectFoods.forEach((food)=>{
+          food.count = 0;
+        })
       },
       beforeDrop(el) {
         let count = this.balls.length;
@@ -375,9 +390,14 @@
           height: 0;
         }
         .name{
-          font-size: 32px;
+          display: flex;
+          flex-direction: column;
+          font-size:28px;
           font-weight: 600;
           color: $color-text;
+          .spec{
+            margin-top: 10px;
+          }
         }
         .price{
           font-size: 28px;

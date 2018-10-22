@@ -8,12 +8,14 @@ import store from './store'
 import 'element-ui/lib/theme-chalk/index.css';
 import './assets/scss/index.scss'
 import ElementUI from 'element-ui'
+import fastclick from 'fastclick'
 
 Vue.config.productionTip = false
 
 
 Vue.use(ElementUI);
 
+fastclick.attach(document.body);
 
 /* eslint-disable no-new */
 new Vue({
