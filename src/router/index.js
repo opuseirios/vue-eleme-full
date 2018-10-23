@@ -5,6 +5,7 @@ import City from './../views/city/city'
 import Msite from './../views/msite/msite'
 import Shop from './../views/shop/shop'
 import Search from './../views/search/search'
+import ShopDetail from './../views/shop/children/shopDetail/shopDetail'
 
 Vue.use(Router)
 
@@ -28,7 +29,13 @@ export default new Router({
     },
     {
       path: '/shop',
-      component: Shop
+      component: Shop,
+      children:[
+        {
+          path:'/shop/shopDetail',
+          component:ShopDetail
+        }
+      ]
     },
     {
       path: '/search/:location',

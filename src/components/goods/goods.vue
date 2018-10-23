@@ -172,10 +172,12 @@
       _calculateHeight() {
         let height = 0;
         this.heightArray.push(height);
-        this.$refs.foodGroup.forEach((item) => {
-          height += item.clientHeight;
-          this.heightArray.push(height);
-        })
+        if(this.$refs.foodGroup.length){
+          this.$refs.foodGroup.forEach((item) => {
+            height += item.clientHeight;
+            this.heightArray.push(height);
+          })
+        }
       },
     },
     watch: {

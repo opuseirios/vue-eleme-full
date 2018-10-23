@@ -6,7 +6,9 @@ const state = {
   /*当前地址*/
   currentLocation:{},
   /*搜索记录*/
-  searchHistory:loadSearches()
+  searchHistory:loadSearches(),
+  /*店铺信息*/
+  shopDetail:{}
 }
 
 export default state;

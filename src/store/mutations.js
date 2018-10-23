@@ -9,6 +9,9 @@ const mutations = {
   },
   [types.SET_SEARCH_HISTORY](state,searches){
     state.searchHistory = searches;
+  },
+  [types.SET_SHOP_DETAIL](state,shopDetail){
+    state.shopDetail = shopDetail;
   }
 }
 

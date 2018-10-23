@@ -1,9 +1,9 @@
 <template>
-  <scroll class='ratings' :data="data">
+  <scroll class='ratings' :data="data" :pull-up="pullUp" @scrollToEnd="_getMoreComments">
     <div>
       <div class="rating-header" v-if="score">
         <div class="leftNav">
-          <h2 class="score">{{score.overall_score.toFixed(2)}}</h2>
+          <h2 class="score" v-if="shopDetail">{{shopDetail.rating}}</h2>
           <p class="title">综合评分</p>
           <div class="desc">高于周边商家{{(score.compare_rating*100).toFixed(1)}}%</div>
         </div>
@@ -33,7 +33,8 @@
         <div class="tags">
           <ul class="clearfix">
             <li class="tag-item"
-                :class="[tag.unsatisfied?'unsatisfied':'satisfied',{'active':currentIndex===index}]" v-for="(tag,index) in tags">{{tag.name}}({{tag.count}})
+                :class="[tag.unsatisfied?'unsatisfied':'satisfied',{'active':currentIndex===index}]"
+                v-for="(tag,index) in tags">{{tag.name}}({{tag.count}})
             </li>
           </ul>
         </div>
@@ -84,13 +85,16 @@
       shopId: {
         type: Number,
         default: -1
+      },
+      shopDetail:{
+        type:Object
       }
     },
-    computed:{
-      offset(){
-        return this.page*this.pageSize;
+    computed: {
+      offset() {
+        return this.page * this.pageSize;
       },
-      data(){
+      data() {
         return this.comments.concat(this.tags)
       }
     },
@@ -99,10 +103,13 @@
         score: null,
         tags: [],
         currentIndex: 0,
-        page:0,
-        pageSize:10,
-        comments:[],
+        page: 0,
+        pageSize: 10,
+        comments: [],
       }
+    },
+    created() {
+      this.pullUp = true;
     },
     mounted() {
       this._getRatingScore();
@@ -110,13 +117,14 @@
       this._getComments();
     },
     methods: {
-      avatarSrc(item){
-        if(!item.avatar.length){
+      avatarSrc(item) {
+        if (!item.avatar.length) {
           return 'http://elm.cangdu.org/img/default.jpg'
         }
         return this._getImg(item.avatar);
       },
       _getRatingScore() {
+        console.log(this.shopId);
         axios.get(`https://elm.cangdu.org/ugc/v2/restaurants/${this.shopId}/ratings/scores`)
           .then((response) => {
             if (response.status === 200) {
@@ -132,20 +140,33 @@
             }
           })
       },
-      _getComments(){
-        axios.get(`https://elm.cangdu.org/ugc/v2/restaurants/${this.shopId}/ratings`,{
-          params:{
-            offset:this.offset,
-            limit:this.pageSize
+      _getComments() {
+        axios.get(`https://elm.cangdu.org/ugc/v2/restaurants/${this.shopId}/ratings`, {
+          params: {
+            offset: this.offset,
+            limit: this.pageSize
           }
-        }).then((res)=>{
-          if(res.status === 200){
-             this.comments = res.data;
+        }).then((res) => {
+          if (res.status === 200) {
+            this.comments = res.data;
           }
         })
       },
-      _getImg(src){
-        return `https://fuss10.elemecdn.com/${src.slice(0,1)}/${src.slice(1,3)}/${src.slice(3)}.jpeg`
+      _getMoreComments() {
+        this.page++;
+        axios.get(`https://elm.cangdu.org/ugc/v2/restaurants/${this.shopId}/ratings`, {
+          params: {
+            offset: this.offset,
+            limit: this.pageSize
+          }
+        }).then((res) => {
+          if(res.status === 200){
+            this.comments = this.comments.concat(res.data);
+          }
+        })
+      },
+      _getImg(src) {
+        return `https://fuss10.elemecdn.com/${src.slice(0, 1)}/${src.slice(1, 3)}/${src.slice(3)}.jpeg`
       }
     }
   }
@@ -242,56 +263,56 @@
         }
       }
     }
-    .comments{
-      .item{
+    .comments {
+      .item {
         border-top: 1px solid $color-border;
         display: flex;
         padding: 20px 0;
-        .icon{
+        .icon {
           flex: 0 0 70px;
           width: 70px;
           height: 70px;
-          img{
+          img {
             width: 70px;
             border-radius: 50%;
           }
         }
-        .content{
+        .content {
           flex: 1;
           margin-left: 30px;
-          .header{
+          .header {
             display: flex;
             justify-content: space-between;
             font-size: 24px;
             color: $color-text;
-            .time{
+            .time {
               color: $color-text-bold;
             }
           }
-          .user-rating{
+          .user-rating {
             margin-top: 20px;
             display: flex;
-            .time-desc{
+            .time-desc {
               margin-left: 10px;
               font-size: 26px;
               color: $color-text;
             }
           }
-          .img-wrapper{
+          .img-wrapper {
             margin: 10px 0;
-            .img{
+            .img {
               float: left;
               width: 140px;
               height: 140px;
               margin-right: 20px;
-              img{
+              img {
                 width: 140px;
               }
             }
           }
-          .food-wrapper{
+          .food-wrapper {
             width: 100%;
-            .name{
+            .name {
               float: left;
               margin-right: 20px;
               width: 80px;
