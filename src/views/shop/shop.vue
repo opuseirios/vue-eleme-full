@@ -102,14 +102,9 @@
     created() {
       this.geohash = this.$route.query.geohash;
       this.shopId = parseInt(this.$route.query.id);
-      this._getShopDetail();
     },
-    mounted() {
-      setTimeout(() => {
-        const rect = this.$refs.switch.getBoundingClientRect();
-        const top = rect.top+rect.height;
-        this.$refs.shopContent.style.top = top+'px';
-      }, 35)
+    mounted(){
+      this._initData();
     },
     computed: {
       deliveryMode() {
@@ -138,6 +133,18 @@
       },
       hide(){
         this.showFlag = false;
+      },
+       _initData(){
+        this._getShopDetail();
+        setTimeout(()=>{
+          this._initShopHeight()
+        },40)
+
+      },
+      _initShopHeight(){
+        const rect = this.$refs.switch.getBoundingClientRect();
+        const top = rect.top+rect.height;
+        this.$refs.shopContent.style.top = top+'px';
       },
       _getShopDetail() {
         axios.get(`https://elm.cangdu.org/shopping/restaurant/${this.shopId}`)

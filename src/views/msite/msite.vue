@@ -13,10 +13,10 @@
       <swiper :options="swiperOption" v-if="entries.length">
         <swiper-slide v-for="(slide,index) in entries" :key="index">
           <ul class="clearfix">
-            <router-link tag="li" class="item" v-for="item in slide" :to="item.link" :key="item.link">
+            <li class="item" v-for="item in slide" :key="item.link" @click="goToFood(item)">
               <img :src="'https://fuss10.elemecdn.com'+item.image_url" alt="">
               <span class="text">{{item.title}}</span>
-            </router-link>
+            </li>
           </ul>
         </swiper-slide>
         <div class="swiper-pagination" slot="pagination"></div>
@@ -129,6 +129,17 @@
           }
         })
       },
+      /*食品分类*/
+      goToFood(item){
+        this.$router.push({
+          path:'/food',
+          query:{
+            geohash:this.geohash,
+            title:item.title,
+            restaurant_category_id:this._getCategoryId(item.link)
+          }
+        })
+      },
       /*获取当前地址*/
       _getAddress() {
         if (!this.geohash) {
@@ -171,6 +182,15 @@
             this.restaurants = res.data;
           }
         })
+      },
+      _getCategoryId(url){
+        let urlData = decodeURIComponent(url.split('=')[1].replace('&target_name',''));
+        console.log(urlData)
+        if(/restaurant_category_id/gi.test(urlData)){
+          return JSON.parse(urlData).restaurant_category_id.id
+        }else {
+          return ''
+        }
       }
     }
   }
