@@ -43,30 +43,30 @@
           </div>
           <transition name="slide">
             <section class="item-content" v-show="sortFlag">
-              <ul class="sortUl">
+              <ul class="sortUl" ref="sortUl" @click.stop="sortList($event)">
                 <li class="item">
                   <i class="el-icon-sort"></i>
-                  <span class="text">智能排序</span>
+                  <span  data-sort="0" class="text">智能排序</span>
                 </li>
                 <li class="item">
                   <i class="el-icon-location"></i>
-                  <span class="text">距离最近</span>
+                  <span  data-sort="5" class="text">距离最近</span>
                 </li>
                 <li class="item">
                   <i class="el-icon-bell"></i>
-                  <span class="text">销量最高</span>
+                  <span  data-sort="6" class="text">销量最高</span>
                 </li>
                 <li class="item">
                   <i class="el-icon-goods"></i>
-                  <span class="text">配送价最低</span>
+                  <span data-sort="1"  class="text">配送价最低</span>
                 </li>
-                <li class="item">
+                <li  class="item">
                   <i class="el-icon-time"></i>
-                  <span class="text">配送时间最快</span>
+                  <span data-sort="2" class="text">配送时间最快</span>
                 </li>
-                <li class="item">
+                <li  class="item">
                   <i class="el-icon-star-on"></i>
-                  <span class="text">评分最高</span>
+                  <span data-sort="3" class="text">评分最高</span>
                 </li>
               </ul>
             </section>
@@ -96,8 +96,8 @@
                 </ul>
               </div>
               <div class="btn-wrapper">
-                <div class="btn">清空</div>
-                <div class="btn confirm">确定 <span v-show="checkedAttrs.length>0">({{checkedAttrs.length}})</span></div>
+                <div class="btn" @click.stop="clearFilter">清空</div>
+                <div class="btn confirm" @click="confirmFilter">确定 <span v-show="checkedAttrs.length>0">({{checkedAttrs.length}})</span></div>
               </div>
             </section>
           </transition>
@@ -108,7 +108,7 @@
       </nav>
       <scroll class="food-content">
         <ul>
-          <li class="item" v-for="item in restaurants">
+          <li class="item" v-for="item in restaurants"  @click="goToShop(item)">
             <div class="icon">
               <img :src="'http://elm.cangdu.org/img/'+item.image_path" alt="">
             </div>
@@ -160,6 +160,7 @@
   import Star from './../../base/star/star'
   import axios from 'axios'
   import Vue from 'vue'
+  import {getData} from "../../assets/js/dom";
 
   export default {
     name: '',
@@ -196,7 +197,8 @@
         restaurants: [],
         checkedAttrs: [],
         activity_attrs: null,
-        delivery: null
+        delivery: null,
+        restaurant_category_ids:[]
       }
     },
     methods: {
@@ -222,14 +224,51 @@
           this.checkedAttrs.splice(index,1);
         }
       },
-      _getRestaurant() {
+      goToShop(item){
+        //http://localhost:3000/shopping/restaurants?latitude=31.23958&longitude=121.499763&offset=0&limit=20&extras[]=activities&keyword=&restaurant_category_id=&restaurant_category_ids[]=&order_by=null&delivery_mode[]=1&support_ids[]=7
+        this.$router.push({
+          path:'/shop',
+          query:{
+            geohash:this.geohash,
+            id:item.id
+          }
+        })
+      },
+      sortList(event){
+        const el = event.target;
+        const sortId = getData(el,'sort');
+        this.sortFlag = false;
+        this._getRestaurant(sortId);
+      },
+      confirmFilter(){
+        this.delivery_mode = 0;
+        this.restaurant_category_ids = [];
+        this.checkedAttrs.forEach((attr)=>{
+          if(attr.id === 1){
+            this.delivery_mode = attr.id;
+          }else {
+            this.restaurant_category_ids.push(attr.id)
+          }
+        })
+        this._getRestaurant(null,this.delivery_mode,this.restaurant_category_ids);
+      },
+      clearFilter(){
+        this.checkedAttrs.forEach((attr)=>{
+          attr.checked = -1;
+        })
+        this.checkedAttrs = [];
+      },
+      _getRestaurant(orderId,delivery_id,restaurant_category_ids) {
         axios.get('https://elm.cangdu.org/shopping/restaurants', {
           params: {
             latitude: this.latitude,
             longitude: this.longitude,
             offset: 0,
             limit: 20,
-            restaurant_category_id: this.restaurant_category_id
+            order_by:orderId,
+            restaurant_category_id: this.restaurant_category_id,
+            delivery_mode:delivery_id,
+            restaurant_category_ids
           }
         }).then((res) => {
           this.restaurants = res.data;
