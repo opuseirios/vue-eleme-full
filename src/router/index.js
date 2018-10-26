@@ -7,6 +7,9 @@ import Shop from './../views/shop/shop'
 import Search from './../views/search/search'
 import ShopDetail from './../views/shop/children/shopDetail/shopDetail'
 import Food from './../views/food/food'
+import Profile from './../views/profile/profile'
+import Login from './../views/login/login'
+import Forget from './../views/forget/forget'
 
 Vue.use(Router)
 
@@ -45,6 +48,18 @@ export default new Router({
     {
       path: '/food',
       component: Food
+    },
+    {
+      path: '/profile',
+      component: Profile
+    },
+    {
+      path: '/login',
+      component: Login
+    },
+    {
+      path: '/forget',
+      component: Forget
     }
   ]
 })
