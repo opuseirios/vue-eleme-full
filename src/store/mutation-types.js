@@ -6,3 +6,9 @@ export const SET_CURRENT_LOCATION = 'SET_CURRENT_LOCATION';
 export const SET_SEARCH_HISTORY = 'SET_SEARCH_HISTORY';
 
 export const SET_SHOP_DETAIL = 'SET_SHOP_DETAIL';
+
+export const SET_USER_INFO = 'SET_USER_INFO';
+
+export const SET_USER_NAME = 'SET_USER_NAME';
+
+export const SET_LOG_OUT = 'SET_LOG_OUT'

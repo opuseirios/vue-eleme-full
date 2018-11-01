@@ -8,7 +8,9 @@ const state = {
   /*搜索记录*/
   searchHistory:loadSearches(),
   /*店铺信息*/
-  shopDetail:{}
+  shopDetail:{},
+  /*用户信息*/
+  userInfo: {},
 }
 
 export default state;

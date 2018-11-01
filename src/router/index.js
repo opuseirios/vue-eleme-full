@@ -10,6 +10,8 @@ import Food from './../views/food/food'
 import Profile from './../views/profile/profile'
 import Login from './../views/login/login'
 import Forget from './../views/forget/forget'
+import Info from './../views/profile/children/info'
+import SetUserName from './../views/profile/children/children/setUserName'
 
 Vue.use(Router)
 
@@ -51,7 +53,19 @@ export default new Router({
     },
     {
       path: '/profile',
-      component: Profile
+      component: Profile,
+      children: [
+        {
+          path: '/profile/info',
+          component: Info,
+          children:[
+            {
+              path:'/profile/info/setUserName',
+              component:SetUserName
+            }
+          ]
+        }
+      ]
     },
     {
       path: '/login',
