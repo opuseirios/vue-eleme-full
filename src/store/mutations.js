@@ -28,6 +28,15 @@ const mutations = {
     state.userInfo = null;
     state.login = false;
     removeStore('user_id');
+  },
+  [types.SET_CART_LIST](state,list){
+    state.cartList = list;
+  },
+  [types.SET_ADD_ADDRESS](state,address){
+    state.addAddress = address;
+  },
+  [types.SET_ADDRESS_LIST](state,list){
+    state.adddressList = list;
   }
 }
 

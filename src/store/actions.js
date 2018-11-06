@@ -1,6 +1,5 @@
-import {saveLocation, clearLocation, saveSearch, clearSearches, deleteSearch} from "../assets/js/cache";
+import {saveLocation, clearLocation, saveSearch, clearSearches, deleteSearch,saveAddress,deleteAddress} from "../assets/js/cache";
 import * as types from './mutation-types'
-import {getStore} from "../assets/js/util";
 import axios from 'axios'
 
 export const saveLocationHistory = function ({commit}, location) {
@@ -31,4 +30,13 @@ export const getUserInfo = function ({commit}, {user_id}) {
         commit(types.SET_USER_INFO, res.data);
       }
     });
+}
+
+/*保存地址*/
+export const saveAddressList = function ({commit,state},address) {
+  commit(types.SET_ADDRESS_LIST,saveAddress(address))
+}
+
+export const deleteAddressList = function ({commit},address) {
+  commit(types.SET_ADDRESS_LIST,deleteAddress(address))
 }

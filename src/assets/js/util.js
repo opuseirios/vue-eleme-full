@@ -8,7 +8,7 @@ export function setStore(name, content) {
 
 export function getStore(name) {
   if (!name) return;
-  return window.localStorage.getItem(name);
+  return window.localStorage.getItem(name) || {};
 }
 
 export function removeStore(name) {

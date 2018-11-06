@@ -4,6 +4,8 @@ const LOCATION_KEY = '__location__';
 const LOCATION_MAX_LEN = 15;
 const SEARCH_KEY = '__search__';
 const SEARCH_MAX_LEN = 15;
+const ADDRESS_KEY = '__address__';
+const ADDRESS_MAX_LEN = 15;
 
 
 function insertArray(arr, val, compare, maxLen) {
@@ -72,4 +74,27 @@ export function deleteSearch(query) {
 export function clearSearches() {
   storage.remove(SEARCH_KEY);
   return [];
+}
+
+
+export function saveAddress(address) {
+  let addressList = storage.get(ADDRESS_KEY,[]);
+  insertArray(addressList,address,(item)=>{
+    return item === address;
+  },ADDRESS_MAX_LEN);
+  storage.set(ADDRESS_KEY,addressList);
+  return addressList;
+}
+
+export function deleteAddress(address) {
+  let addressList = storage.get(ADDRESS_KEY,[]);
+  deleteFromArray(addressList, (item) => {
+    return item.address === address.address;
+  })
+  storage.set(ADDRESS_KEY,addressList);
+  return addressList;
+}
+
+export function loadAddress() {
+  return storage.get(ADDRESS_KEY,[]);
 }

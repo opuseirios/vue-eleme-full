@@ -72,6 +72,8 @@
   import Spec from './../../base/spec/spec'
   import Tip from './../../base/tip/tip'
   import Vue from 'vue'
+  import {mapActions} from 'vuex'
+
   export default {
     name: '',
     components: {Scroll, CartControl, ShopCart, SpecCartControl, Spec, Tip},
@@ -90,12 +92,14 @@
         currentIndex: 0,
         scrollY: -1,
         heightArray: [],
-        selectFood: null
+        selectFood: null,
+        shopid: ''
       }
     },
     created() {
       this.probeType = 3;
       this.listenScroll = true;
+      this.shopid = this.$route.query.id;
       this.$nextTick(() => {
         this._getFoodList();
       })
@@ -124,10 +128,9 @@
               foods.push(food);
             }
           }
-
         }
         return foods;
-      }
+      },
     },
     methods: {
       selectItem(item, index) {
@@ -146,14 +149,14 @@
         }, 20)
       },
       addSpec(specItem) {
-        if(!this.selectFood.count){
-          Vue.set(this.selectFood,'count',1)
-          Vue.set(this.selectFood,'spec',specItem);
-        }else {
+        if (!this.selectFood.count) {
+          Vue.set(this.selectFood, 'count', 1)
+          Vue.set(this.selectFood, 'spec', specItem);
+        } else {
           this.selectFood.count++;
         }
       },
-      decreaseSpec(){
+      decreaseSpec() {
         this.$refs.tip.show();
       },
       _drop(event) {
@@ -172,13 +175,16 @@
       _calculateHeight() {
         let height = 0;
         this.heightArray.push(height);
-        if(this.$refs.foodGroup&&this.$refs.foodGroup.length){
+        if (this.$refs.foodGroup && this.$refs.foodGroup.length) {
           this.$refs.foodGroup.forEach((item) => {
             height += item.clientHeight;
             this.heightArray.push(height);
           })
         }
       },
+      ...mapActions([
+        'addCart'
+      ])
     },
     watch: {
       foodList() {

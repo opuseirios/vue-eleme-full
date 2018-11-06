@@ -11,4 +11,10 @@ export const SET_USER_INFO = 'SET_USER_INFO';
 
 export const SET_USER_NAME = 'SET_USER_NAME';
 
-export const SET_LOG_OUT = 'SET_LOG_OUT'
+export const SET_LOG_OUT = 'SET_LOG_OUT';
+
+export const SET_CART_LIST = 'SET_CART_LIST';
+
+export const SET_ADD_ADDRESS = 'SET_ADD_ADDRESS'
+
+export const SET_ADDRESS_LIST = 'SET_ADDRESS_LIST';

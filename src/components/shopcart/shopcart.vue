@@ -11,7 +11,7 @@
         <div class="totalPrice" :class="{'active':totalPrice>0}">¥ {{totalPrice}}</div>
         <div class="desc" :class="{'active':totalPrice>0}">另需配送费¥{{delivery_fee}}元</div>
       </div>
-      <div class="delivery_btn" :class="{'active':this.totalPrice>=this.delivery_min_price}">
+      <div class="delivery_btn" :class="{'active':this.totalPrice>=this.delivery_min_price}" @click="goToOrder">
         {{payStatus}}
       </div>
     </div>
@@ -127,6 +127,10 @@
         }
       }
     },
+    mounted(){
+      this.geohash = this.$route.query.geohash;
+      this.id = this.$route.query.id;
+    },
     methods: {
       drop(el) {
         for (let i = 0; i < this.balls.length; i++) {
@@ -194,6 +198,19 @@
       },
       hide(){
         this.showFlag = false;
+      },
+      goToOrder(){
+        if(this.delivery_min_price>this.totalPrice){
+          return;
+        }
+
+        this.$router.push({
+          path:'/confirmOrder',
+          query:{
+            geohash:this.geohash,
+            id:this.id
+          }
+        })
       }
     }
   }

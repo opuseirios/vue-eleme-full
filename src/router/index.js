@@ -12,6 +12,10 @@ import Login from './../views/login/login'
 import Forget from './../views/forget/forget'
 import Info from './../views/profile/children/info'
 import SetUserName from './../views/profile/children/children/setUserName'
+import Address from './../views/profile/children/children/address'
+import Add from './../views/profile/children/children/children/add'
+import AddDetail from './../views/profile/children/children/children/children/addDetail'
+import ConfirmOrder from './../views/confirm-order/confirm-order'
 
 Vue.use(Router)
 
@@ -58,10 +62,26 @@ export default new Router({
         {
           path: '/profile/info',
           component: Info,
-          children:[
+          children: [
             {
-              path:'/profile/info/setUserName',
-              component:SetUserName
+              path: '/profile/info/setUserName',
+              component: SetUserName
+            },
+            {
+              path: '/profile/info/address',
+              component: Address,
+              children: [
+                {
+                  path: '/profile/info/address/add',
+                  component: Add,
+                  children: [
+                    {
+                      path: '/profile/info/address/add/addDetail',
+                      component: AddDetail
+                    }
+                  ]
+                }
+              ]
             }
           ]
         }
@@ -74,6 +94,10 @@ export default new Router({
     {
       path: '/forget',
       component: Forget
+    },
+    {
+      path: '/confirmOrder',
+      component: ConfirmOrder
     }
   ]
 })

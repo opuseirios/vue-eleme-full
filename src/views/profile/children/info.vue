@@ -18,7 +18,7 @@
             <i class="icon-arrow-right"></i>
           </div>
         </div>
-        <div class="user-item">
+        <div class="user-item"  @click="address">
           <span class="name">收货地址</span>
           <div class="content">
             <span class="address"></span>
@@ -28,7 +28,7 @@
       </section>
       <section class="setting">
         <h4 class="title">账号绑定</h4>
-        <div class="content">
+        <div class="content" @click="bindTel">
           <div class="left">
             <i class="el-icon-mobile-phone"></i>
             <span>手机</span>
@@ -54,6 +54,7 @@
         退出登录
       </div>
       <confirm confirm-text="是否退出登录" cancel-btn-text="再等等" confirm-btn-text="退出登录" ref="confirm" @confirm="confirm"></confirm>
+      <alert-tip tip-text="请在手机APP中设置" ref="alertTip"></alert-tip>
       <router-view></router-view>
     </div>
   </slide>
@@ -63,19 +64,19 @@
 <script>
   import PageHeader from './../../../base/pageHeader/pageHeader'
   import Slide from './../../../base/slide/slide'
+  import AlertTip from './../../../base/alert-tip/alert-tip'
   import Confirm from './../../../base/confirm/confirm'
   import {mapGetters,mapMutations} from 'vuex';
 
   export default {
     name: '',
-    components: {PageHeader, Slide, Confirm},
+    components: {PageHeader, Slide, Confirm, AlertTip},
     computed:{
       ...mapGetters([
         'userInfo'
       ])
     },
     mounted(){
-      console.log(this.userInfo);
       this.initData();
     },
     data(){
@@ -120,6 +121,14 @@
       changePassword(){
         this.$router.push({
           path:'/forget'
+        })
+      },
+      bindTel(){
+        this.$refs.alertTip.show();
+      },
+      address(){
+        this.$router.push({
+          path:'/profile/info/address'
         })
       },
       ...mapMutations({

@@ -1,4 +1,4 @@
-import {loadLoaction,loadSearches} from "../assets/js/cache";
+import {loadLoaction,loadSearches,loadAddress} from "../assets/js/cache";
 
 const state = {
   /*地址记录*/
@@ -11,6 +11,12 @@ const state = {
   shopDetail:{},
   /*用户信息*/
   userInfo: {},
+  /*购物车*/
+  cartList: [],
+  /*添加详细地址*/
+  addAddress:'',
+  /*地址列表*/
+  addressList:loadAddress()
 }
 
 export default state;
